@@ -5,7 +5,7 @@
  */
 
 import * as p from 'path';
-import {appendFileSync, writeFileSync} from 'fs';
+import {appendFileSync} from 'fs';
 import {sync as mkdirpSync} from 'mkdirp';
 import printICUMessage from './print-icu-message';
 
