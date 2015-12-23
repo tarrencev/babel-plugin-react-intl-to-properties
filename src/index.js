@@ -5,7 +5,7 @@
  */
 
 import * as p from 'path';
-import {writeFileSync} from 'fs';
+import {appendFileSync, writeFileSync} from 'fs';
 import {sync as mkdirpSync} from 'mkdirp';
 import printICUMessage from './print-icu-message';
 
@@ -160,10 +160,17 @@ export default function ({types: t}) {
                             basename + '.json'
                         );
 
-                        let messagesFile = JSON.stringify(descriptors, null, 2);
-
                         mkdirpSync(p.dirname(messagesFilename));
-                        writeFileSync(messagesFilename, messagesFile);
+
+                        descriptors.forEach((descriptor) => {
+                            const buffer = [
+                                '# ' + descriptor.description,
+                                descriptor.id + '=' + descriptor.defaultMessage,
+                                '\n',
+                            ].join('\n');
+
+                            appendFileSync(messagesFilename, buffer);
+                        });
                     }
                 },
             },

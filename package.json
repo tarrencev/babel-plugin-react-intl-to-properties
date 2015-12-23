@@ -1,10 +1,10 @@
 {
-  "name": "babel-plugin-react-intl",
+  "name": "babel-plugin-react-intl-to-properties",
   "version": "2.0.0",
-  "description": "Extracts string messages for translation from modules that use React Intl.",
+  "description": "Extracts string messages for translation from modules that use React Intl into a .properties file.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yahoo/babel-plugin-react-intl.git"
+    "url": "git+https://github.com/tarrencev/babel-plugin-react-intl-to-properties.git"
   },
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -34,7 +34,7 @@
     "react-intl"
   ],
   "bugs": {
-    "url": "https://github.com/yahoo/babel-plugin-react-intl/issues"
+    "url": "https://github.com/tarrencev/babel-plugin-react-intl-to-properties/issues"
   },
-  "homepage": "https://github.com/yahoo/babel-plugin-react-intl#readme"
+  "homepage": "https://github.com/tarrencev/babel-plugin-react-intl-to-properties#readme"
 }
