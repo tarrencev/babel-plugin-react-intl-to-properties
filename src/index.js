@@ -157,7 +157,7 @@ export default function ({types: t}) {
                         let messagesFilename = p.join(
                             opts.messagesDir,
                             p.dirname(p.relative(process.cwd(), filename)),
-                            basename + '.json'
+                            basename + '.properties'
                         );
 
                         mkdirpSync(p.dirname(messagesFilename));
