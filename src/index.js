@@ -148,28 +148,27 @@ export default function ({types: t}) {
 
                 exit(path, state) {
                     const {file, opts, reactIntl} = state;
-                    const {basename, filename}    = file.opts;
+                    const {fileName, messagesDir} = opts;
 
                     let descriptors = [...reactIntl.messages.values()];
                     file.metadata['react-intl'] = {messages: descriptors};
 
-                    if (opts.messagesDir && descriptors.length > 0) {
+                    if (messagesDir && descriptors.length > 0) {
                         let messagesFilename = p.join(
-                            opts.messagesDir,
-                            p.dirname(p.relative(process.cwd(), filename)),
-                            basename + '.properties'
+                            messagesDir,
+                            fileName + '.properties'
                         );
 
                         mkdirpSync(p.dirname(messagesFilename));
 
                         descriptors.forEach((descriptor) => {
-                            const buffer = [
-                                '# ' + descriptor.description,
-                                descriptor.id + '=' + descriptor.defaultMessage,
-                                '\n',
-                            ].join('\n');
+                            const {defaultMessage, description, id} = descriptor;
+                            const formattedDescription =
+                                `# ${description}
+                                ${id}=${defaultMessage}
+                                `;
 
-                            appendFileSync(messagesFilename, buffer);
+                            appendFileSync(messagesFilename, formattedDescription);
                         });
                     }
                 },
