@@ -166,7 +166,8 @@ export default function ({types: t}) {
                             const formattedDescription =
                                 `# ${description}
                                 ${id}=${defaultMessage}
-                                `;
+
+                                `.replace(/^\s+/gm, ''); // Dedent string
 
                             appendFileSync(messagesFilename, formattedDescription);
                         });
