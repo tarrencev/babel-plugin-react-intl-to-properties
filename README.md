@@ -12,7 +12,7 @@ $ npm install babel-plugin-react-intl-to-properties
 
 The default message descriptors for the app's default language will be extracted from: `defineMessages()`, `<FormattedMessage>`, and `<FormattedHTMLMeessage>`; all of which are named exports of the React Intl package.
 
-### Via `.babelrc` (Recommended)
+### Via `.babelrc`
 
 **.babelrc**
 
@@ -35,7 +35,7 @@ The default message descriptors for the app's default language will be extracted
 
 - **`moduleSourceName`**: The ES6 module source name of the React Intl package. Defaults to: `"react-intl"`, but can be changed to another name/path to React Intl.
 
-- **`namespace`**: Only extract messages with a particular namespaced `id` in the form `<namespace>.id`.
+- **`namespace`**: Only extract messages with a particular namespaced `id` in the form `<namespace>.id`. Useful when including external components with their own `messages`.
 
 ### Via CLI
 
