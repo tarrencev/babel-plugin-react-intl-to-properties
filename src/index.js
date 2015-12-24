@@ -148,13 +148,14 @@ export default function ({types: t}) {
 
                 exit(path, state) {
                     const {file, opts, reactIntl} = state;
-                    const {fileName, messagesDir} = opts;
+                    const {fileName, messagesDir, namespace} = opts;
+                    const isNamespaced = !!namespace;
 
-                    let descriptors = [...reactIntl.messages.values()];
+                    const descriptors = [...reactIntl.messages.values()];
                     file.metadata['react-intl'] = {messages: descriptors};
 
                     if (messagesDir && descriptors.length > 0) {
-                        let messagesFilename = p.join(
+                        const messagesFilename = p.join(
                             messagesDir,
                             fileName + '.properties'
                         );
@@ -163,6 +164,11 @@ export default function ({types: t}) {
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
+
+                            if (isNamespaced && id.split('.')[0] !== namespace) {
+                                return;
+                            }
+
                             const formattedDescription =
                                 `# ${description}
                                 ${id}=${defaultMessage}
