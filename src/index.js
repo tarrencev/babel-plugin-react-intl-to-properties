@@ -20,6 +20,8 @@ const FUNCTION_NAMES = [
 
 const DESCRIPTOR_PROPS = new Set(['id', 'description', 'defaultMessage']);
 
+let hasClearedPropsFile = false;
+
 export default function ({types: t}) {
     function getModuleSourceName(opts) {
         return opts.moduleSourceName || 'react-intl';
@@ -148,12 +150,6 @@ export default function ({types: t}) {
         visitor: {
             Program: {
                 enter(path, state) {
-                    const { opts } = state;
-                    const { fileName, messagesDir } = opts;
-
-                    mkdirpSync(p.dirname(messagesDir));
-                    writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
-
                     state.reactIntl = {
                         messages: new Map(),
                     };
@@ -181,6 +177,12 @@ export default function ({types: t}) {
                                 ${id}=${defaultMessage}
 
                                 `.replace(/^\s+/gm, ''); // Dedent string
+
+                            if (hasClearedPropsFile) {
+                                mkdirpSync(p.dirname(messagesDir));
+                                writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
+                                hasClearedPropsFile = true;
+                            }
 
                             appendFileSync(getMessagesFilePath(messagesDir, fileName), formattedDescription);
                         });
