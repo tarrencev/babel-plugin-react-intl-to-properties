@@ -178,7 +178,7 @@ export default function ({types: t}) {
 
                                 `.replace(/^\s+/gm, ''); // Dedent string
 
-                            if (hasClearedPropsFile) {
+                            if (!hasClearedPropsFile) {
                                 mkdirpSync(p.dirname(messagesDir));
                                 writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
                                 hasClearedPropsFile = true;
