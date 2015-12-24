@@ -8,13 +8,31 @@ Extracts string messages for translation from modules that use [React Intl][] in
 $ npm install babel-plugin-react-intl-to-properties
 ```
 
+## Example
+
+##### Formatted Message
+
+```js
+  <FormattedMessage
+        defaultMessage='React Intl to Properties'
+        description='Title for React Intl to Properties'
+        id='example.rectintltoprops'
+    />
+```
+
+##### Outputted `.properties`
+
+```properties
+# Title for React Intl to Properties
+example.rectintltoprops=React Intl to Properties
+```
+
+
 ## Usage
 
 The default message descriptors for the app's default language will be extracted from: `defineMessages()`, `<FormattedMessage>`, and `<FormattedHTMLMeessage>`; all of which are named exports of the React Intl package.
 
-### Via `.babelrc`
-
-**.babelrc**
+##### `.babelrc`
 
 ```json
 {
@@ -27,7 +45,7 @@ The default message descriptors for the app's default language will be extracted
 }
 ```
 
-#### Options
+##### Options
 
 - **`enforceDescriptions`**: Whether or not message declarations _must_ contain a `description` to provide context to translators. Defaults to: `false`.
 
@@ -37,7 +55,7 @@ The default message descriptors for the app's default language will be extracted
 
 - **`namespace`**: Only extract messages with a particular namespaced `id` in the form `<namespace>.id`. Useful when including external components with their own `messages`.
 
-### Via CLI
+##### Via CLI
 
 ```sh
 $ babel --plugins react-intl-to-properties script.js
