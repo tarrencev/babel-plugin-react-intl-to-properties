@@ -9,6 +9,7 @@
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "author": "Eric Ferraiuolo <edf@ericf.me>",
+  "author": "Tarrence van As <tarrence13@gmail.com>",
   "dependencies": {
     "babel-runtime": "^6.2.0",
     "intl-messageformat-parser": "^1.2.0",
