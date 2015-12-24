@@ -5,7 +5,7 @@
  */
 
 import * as p from 'path';
-import {appendFileSync} from 'fs';
+import {appendFileSync, writeFileSync} from 'fs';
 import {sync as mkdirpSync} from 'mkdirp';
 import printICUMessage from './print-icu-message';
 
@@ -137,10 +137,23 @@ export default function ({types: t}) {
         return importedNames.some((name) => path.referencesImport(mod, name));
     }
 
+    function getMessagesFilePath(messagesDir, fileName) {
+        return p.join(
+            messagesDir,
+            fileName + '.properties'
+        );
+    }
+
     return {
         visitor: {
             Program: {
                 enter(path, state) {
+                    const { opts } = state;
+                    const { fileName, messagesDir } = opts;
+
+                    mkdirpSync(p.dirname(messagesDir));
+                    writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
+
                     state.reactIntl = {
                         messages: new Map(),
                     };
@@ -155,12 +168,6 @@ export default function ({types: t}) {
                     file.metadata['react-intl'] = {messages: descriptors};
 
                     if (messagesDir && descriptors.length > 0) {
-                        const messagesFilename = p.join(
-                            messagesDir,
-                            fileName + '.properties'
-                        );
-
-                        mkdirpSync(p.dirname(messagesFilename));
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
@@ -175,7 +182,7 @@ export default function ({types: t}) {
 
                                 `.replace(/^\s+/gm, ''); // Dedent string
 
-                            appendFileSync(messagesFilename, formattedDescription);
+                            appendFileSync(getMessagesFilePath(messagesDir, fileName), formattedDescription);
                         });
                     }
                 },
