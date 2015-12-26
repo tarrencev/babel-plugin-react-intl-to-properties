@@ -37,9 +37,10 @@ The default message descriptors for the app's default language will be extracted
 ```json
 {
   "plugins": [
-    ["react-intl", {
-        "messagesDir": "./build/messages/",
-        "enforceDescriptions": true
+    ["react-intl-to-properties", {
+        "enforceDescriptions": true,
+        "fileName": "en-US",
+        "messagesDir": "./build/messages/"
     }]
   ]
 }
@@ -48,6 +49,8 @@ The default message descriptors for the app's default language will be extracted
 ##### Options
 
 - **`enforceDescriptions`**: Whether or not message declarations _must_ contain a `description` to provide context to translators. Defaults to: `false`.
+
+- **`fileName`**: Name of the generated `.properties` file.
 
 - **`messagesDir`**: The target location where the plugin will output a `.properties` file corresponding to each component from which React Intl messages were extracted. If not provided, the extracted message descriptors will only be accessible via Babel's API.
 
