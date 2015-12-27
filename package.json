@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-react-intl-to-properties",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Extracts string messages for translation from modules that use React Intl into a .properties file.",
   "repository": {
     "type": "git",
