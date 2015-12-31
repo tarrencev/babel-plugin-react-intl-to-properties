@@ -167,6 +167,7 @@ export default function ({types: t}) {
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
+                            const cleanedMessage = defaultMessage.replace(/\s+/g, ' ');
 
                             if (isNamespaced && id.split('.')[0] !== namespace) {
                                 return;
@@ -174,7 +175,7 @@ export default function ({types: t}) {
 
                             const formattedDescription =
                                 `# ${description}
-                                ${id}=${defaultMessage}
+                                ${id}=${cleanedMessage}
 
                                 `.replace(/^\s+/gm, ''); // Dedent string
 
