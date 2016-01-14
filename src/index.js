@@ -5,10 +5,9 @@
  */
 
 import * as p from 'path';
-import {writeFileSync} from 'fs';
+import {appendFileSync, writeFileSync} from 'fs';
 import {sync as mkdirpSync} from 'mkdirp';
 import printICUMessage from './print-icu-message';
-import {createEditor} from 'properties-parser';
 
 const COMPONENT_NAMES = [
     'FormattedMessage',
@@ -21,6 +20,7 @@ const FUNCTION_NAMES = [
 
 const DESCRIPTOR_PROPS = new Set(['id', 'description', 'defaultMessage']);
 
+const translations = new Map();
 let hasClearedPropsFile = false;
 
 export default function ({types: t}) {
@@ -164,18 +164,13 @@ export default function ({types: t}) {
                     const descriptors = [...reactIntl.messages.values()];
                     file.metadata['react-intl'] = {messages: descriptors};
 
-                    // Create the properties file and editor
                     const propertiesFilePath = getMessagesFilePath(messagesDir, fileName);
-                    if (!hasClearedPropsFile) {
-                        mkdirpSync(p.dirname(messagesDir));
-                        writeFileSync(propertiesFilePath, '');
-                        hasClearedPropsFile = true;
-                    }
-                    const propertiesEditor = createEditor(propertiesFilePath, {
-                        separator: ' = ',
-                    });
 
                     if (messagesDir && descriptors.length > 0) {
+                        // On each write, we have to clear the properties file. We keep all the
+                        // keys we encountered in the `translations` Map.
+                        mkdirpSync(p.dirname(messagesDir));
+                        writeFileSync(propertiesFilePath, '');
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
@@ -186,10 +181,22 @@ export default function ({types: t}) {
                                 return;
                             }
 
-                            propertiesEditor.set(id, cleanedMessage, cleanedDescription);
+                            translations.set(id, {
+                                value: cleanedMessage,
+                                comment: cleanedDescription,
+                            });
                         });
 
-                        propertiesEditor.save();
+                        // When done going through each descriptor, re-write the properties file
+                        // with every translation we have seen so far
+                        Array.from(translations.keys()).sort().forEach(key => {
+                            const { value, comment } = translations.get(key);
+                            const formattedDescription =
+                                `# ${comment}
+                                ${key} = ${value}
+                                `.replace(/^\s+/gm, ''); // Dedent string
+                            appendFileSync(propertiesFilePath, formattedDescription);
+                        })
                     }
                 },
             },
