@@ -5,9 +5,10 @@
  */
 
 import * as p from 'path';
-import {appendFileSync, writeFileSync} from 'fs';
+import {writeFileSync} from 'fs';
 import {sync as mkdirpSync} from 'mkdirp';
 import printICUMessage from './print-icu-message';
+import {createEditor} from 'properties-parser';
 
 const COMPONENT_NAMES = [
     'FormattedMessage',
@@ -163,30 +164,32 @@ export default function ({types: t}) {
                     const descriptors = [...reactIntl.messages.values()];
                     file.metadata['react-intl'] = {messages: descriptors};
 
+                    // Create the properties file and editor
+                    const propertiesFilePath = getMessagesFilePath(messagesDir, fileName);
+                    if (!hasClearedPropsFile) {
+                        mkdirpSync(p.dirname(messagesDir));
+                        writeFileSync(propertiesFilePath, '');
+                        hasClearedPropsFile = true;
+                    }
+                    const propertiesEditor = createEditor(propertiesFilePath, {
+                        separator: ' = ',
+                    });
+
                     if (messagesDir && descriptors.length > 0) {
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
                             const cleanedMessage = defaultMessage.replace(/\s+/g, ' ');
+                            const cleanedDescription = description.trim().replace(/\s+/g, ' ');
 
                             if (isNamespaced && id.split('.')[0] !== namespace) {
                                 return;
                             }
 
-                            const formattedDescription =
-                                `# ${description}
-                                ${id}=${cleanedMessage}
-
-                                `.replace(/^\s+/gm, ''); // Dedent string
-
-                            if (!hasClearedPropsFile) {
-                                mkdirpSync(p.dirname(messagesDir));
-                                writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
-                                hasClearedPropsFile = true;
-                            }
-
-                            appendFileSync(getMessagesFilePath(messagesDir, fileName), formattedDescription);
+                            propertiesEditor.set(id, cleanedMessage, cleanedDescription);
                         });
+
+                        propertiesEditor.save();
                     }
                 },
             },
