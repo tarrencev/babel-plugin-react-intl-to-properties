@@ -20,7 +20,7 @@ const FUNCTION_NAMES = [
 
 const DESCRIPTOR_PROPS = new Set(['id', 'description', 'defaultMessage']);
 
-let hasClearedPropsFile = false;
+const translations = new Map();
 
 export default function ({types: t}) {
     function getModuleSourceName(opts) {
@@ -163,29 +163,38 @@ export default function ({types: t}) {
                     const descriptors = [...reactIntl.messages.values()];
                     file.metadata['react-intl'] = {messages: descriptors};
 
+                    const propertiesFilePath = getMessagesFilePath(messagesDir, fileName);
+
                     if (messagesDir && descriptors.length > 0) {
+                        // On each write, we have to clear the properties file. We keep all the
+                        // keys we encountered in the `translations` Map.
+                        mkdirpSync(p.dirname(messagesDir));
+                        writeFileSync(propertiesFilePath, '');
 
                         descriptors.forEach((descriptor) => {
                             const {defaultMessage, description, id} = descriptor;
                             const cleanedMessage = defaultMessage.replace(/\s+/g, ' ');
+                            const cleanedDescription = description.trim().replace(/\s+/g, ' ');
 
                             if (isNamespaced && id.split('.')[0] !== namespace) {
                                 return;
                             }
 
+                            translations.set(id, {
+                                value: cleanedMessage,
+                                comment: cleanedDescription,
+                            });
+                        });
+
+                        // When done going through each descriptor, re-write the properties file
+                        // with every translation we have seen so far
+                        Array.from(translations.keys()).sort().forEach((key) => {
+                            const { value, comment } = translations.get(key);
                             const formattedDescription =
-                                `# ${description}
-                                ${id}=${cleanedMessage}
-
+                                `# ${comment}
+                                ${key} = ${value}
                                 `.replace(/^\s+/gm, ''); // Dedent string
-
-                            if (!hasClearedPropsFile) {
-                                mkdirpSync(p.dirname(messagesDir));
-                                writeFileSync(getMessagesFilePath(messagesDir, fileName), '');
-                                hasClearedPropsFile = true;
-                            }
-
-                            appendFileSync(getMessagesFilePath(messagesDir, fileName), formattedDescription);
+                            appendFileSync(propertiesFilePath, formattedDescription);
                         });
                     }
                 },
