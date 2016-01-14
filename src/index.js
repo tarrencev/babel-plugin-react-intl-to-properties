@@ -21,7 +21,6 @@ const FUNCTION_NAMES = [
 const DESCRIPTOR_PROPS = new Set(['id', 'description', 'defaultMessage']);
 
 const translations = new Map();
-let hasClearedPropsFile = false;
 
 export default function ({types: t}) {
     function getModuleSourceName(opts) {
@@ -189,14 +188,14 @@ export default function ({types: t}) {
 
                         // When done going through each descriptor, re-write the properties file
                         // with every translation we have seen so far
-                        Array.from(translations.keys()).sort().forEach(key => {
+                        Array.from(translations.keys()).sort().forEach((key) => {
                             const { value, comment } = translations.get(key);
                             const formattedDescription =
                                 `# ${comment}
                                 ${key} = ${value}
                                 `.replace(/^\s+/gm, ''); // Dedent string
                             appendFileSync(propertiesFilePath, formattedDescription);
-                        })
+                        });
                     }
                 },
             },
