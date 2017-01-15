@@ -168,7 +168,7 @@ export default function ({types: t}) {
                     if (messagesDir && descriptors.length > 0) {
                         // On each write, we have to clear the properties file. We keep all the
                         // keys we encountered in the `translations` Map.
-                        mkdirpSync(p.dirname(messagesDir));
+                        mkdirpSync(messagesDir);
                         writeFileSync(propertiesFilePath, '');
 
                         descriptors.forEach((descriptor) => {
